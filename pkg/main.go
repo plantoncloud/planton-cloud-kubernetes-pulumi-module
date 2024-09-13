@@ -7,15 +7,10 @@ import (
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
 
-type ResourceStack struct {
-	Input  *plantoncloudkubernetes.PlantonCloudKubernetesStackInput
-	Labels map[string]string
-}
-
-func (s *ResourceStack) Resources(ctx *pulumi.Context) error {
+func Resources(ctx *pulumi.Context, stackInput *plantoncloudkubernetes.PlantonCloudKubernetesStackInput) error {
 	//create kubernetes-provider from the credential in the stack-input
 	_, err := pulumikubernetesprovider.GetWithKubernetesClusterCredential(ctx,
-		s.Input.KubernetesClusterCredential, "kubernetes")
+		stackInput.KubernetesClusterCredential, "kubernetes")
 	if err != nil {
 		return errors.Wrap(err, "failed to setup gcp provider")
 	}
