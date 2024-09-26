@@ -1,346 +1,271 @@
-# Multiple Examples for `MicroserviceKubernetes` API-Resource
+---
 
-## Example with Environment Variables
+### Example 1: Basic Kubernetes Cluster Connection
 
-### Create using CLI
-
-Create a YAML file using the example shown below. After the YAML is created, use the command below to apply it.
-
-```shell
-planton apply -f <yaml-path>
-```
-
-### YAML Configuration
+This example demonstrates how to configure the module to connect to a basic Kubernetes cluster using the provided credentials. The `kubeconfig` is specified in the `cluster_credentials` section.
 
 ```yaml
 apiVersion: code2cloud.planton.cloud/v1
-kind: MicroserviceKubernetes
+kind: PlantonCloudKubernetes
 metadata:
-  name: todo-list-api
+  name: basic-kubernetes-cluster
 spec:
-  environmentInfo:
-    envId: my-org-prod
-  version: main
-  container:
-    app:
-      env:
-        variables:
-          DATABASE_NAME: todo
-          LOG_LEVEL: debug
-      image:
-        repo: nginx
-        tag: latest
-      ports:
-        - appProtocol: http
-          containerPort: 8080
-          isIngressPort: true
-          name: rest-api
-          networkProtocol: TCP
-          servicePort: 80
-      resources:
-        requests:
-          cpu: 100m
-          memory: 100Mi
-        limits:
-          cpu: 2000m
-          memory: 2Gi
+  cluster_credentials:
+    kubeconfig: |
+      apiVersion: v1
+      kind: Config
+      clusters:
+        - cluster:
+            server: https://k8s-api.mycompany.com
+          name: my-kubernetes-cluster
+      contexts:
+        - context:
+            cluster: my-kubernetes-cluster
+            user: cluster-admin
+          name: my-cluster-context
+      current-context: my-cluster-context
+      users:
+        - name: cluster-admin
+          user:
+            token: my-secret-token
 ```
 
 ---
 
-## Example with Environment Secrets
+### Example 2: Kubernetes Cluster on GKE (Google Kubernetes Engine)
 
-*Note: This example assumes that secrets are managed by Planton Cloud's [GCP Secrets Manager](https://buf.build/plantoncloud/planton-cloud-apis/docs/main:cloud.planton.apis.code2cloud.v1.gcp.gcpsecretsmanager) deployment module.*
-
-### Create using CLI
-
-Create a YAML file using the example shown below. After the YAML is created, use the command below to apply it.
-
-```shell
-planton apply -f <yaml-path>
-```
-
-### YAML Configuration
+This example connects to a GKE cluster using a GCP service account for authentication. It assumes that the service account has appropriate permissions to access the Kubernetes API.
 
 ```yaml
 apiVersion: code2cloud.planton.cloud/v1
-kind: MicroserviceKubernetes
+kind: PlantonCloudKubernetes
 metadata:
-  name: todo-list-api
+  name: gke-cluster-connection
 spec:
-  environmentInfo:
-    envId: my-org-prod
-  version: main
-  container:
-    app:
-      env:
-        secrets:
-          # Format: ${<secret-manager-id>.<secret-key>}
-          DATABASE_PASSWORD: ${gcpsm-my-org-prod-gcp-secrets.database-password}
-        variables:
-          DATABASE_NAME: todo
-      image:
-        repo: nginx
-        tag: latest
-      ports:
-        - appProtocol: http
-          containerPort: 8080
-          isIngressPort: true
-          name: rest-api
-          networkProtocol: TCP
-          servicePort: 80
-      resources:
-        requests:
-          cpu: 100m
-          memory: 100Mi
-        limits:
-          cpu: 2000m
-          memory: 2Gi
+  cluster_credentials:
+    kubeconfig: |
+      apiVersion: v1
+      kind: Config
+      clusters:
+        - cluster:
+            server: https://gke-cluster-api.example.com
+          name: gke-cluster
+      contexts:
+        - context:
+            cluster: gke-cluster
+            user: gke-user
+          name: gke-cluster-context
+      current-context: gke-cluster-context
+      users:
+        - name: gke-user
+          user:
+            auth-provider:
+              name: gcp
+              config:
+                access-token: your-access-token
+                cmd-path: gcloud
+                cmd-args: config config-helper --format=json
+                expiry-key: '{.credential.token_expiry}'
+                token-key: '{.credential.access_token}'
 ```
 
 ---
 
-## Example with Multiple Containers
+### Example 3: EKS (Elastic Kubernetes Service) Cluster on AWS
 
-### Create using CLI
-
-Create a YAML file using the example shown below. After the YAML is created, use the command below to apply it.
-
-```shell
-planton apply -f <yaml-path>
-```
-
-### YAML Configuration
+This example configures a connection to an EKS cluster on AWS using the AWS command-line tool to retrieve an authentication token. It allows users to securely access their EKS cluster.
 
 ```yaml
 apiVersion: code2cloud.planton.cloud/v1
-kind: MicroserviceKubernetes
+kind: PlantonCloudKubernetes
 metadata:
-  name: multi-container-app
+  name: eks-cluster-connection
 spec:
-  environmentInfo:
-    envId: my-org-staging
-  version: develop
-  container:
-    app:
-      image:
-        repo: myorg/multi-container-app
-        tag: v1.2.3
-      ports:
-        - appProtocol: http
-          containerPort: 8080
-          isIngressPort: true
-          name: main-api
-          networkProtocol: TCP
-          servicePort: 80
-        - appProtocol: grpc
-          containerPort: 9090
-          isIngressPort: false
-          name: grpc-api
-          networkProtocol: TCP
-          servicePort: 9090
-      resources:
-        requests:
-          cpu: 250m
-          memory: 256Mi
-        limits:
-          cpu: 1000m
-          memory: 1Gi
-    sidecar:
-      image:
-        repo: myorg/log-collector
-        tag: stable
-      ports:
-        - appProtocol: tcp
-          containerPort: 514
-          isIngressPort: false
-          name: log-collector
-          networkProtocol: TCP
-          servicePort: 514
-      resources:
-        requests:
-          cpu: 50m
-          memory: 64Mi
-        limits:
-          cpu: 200m
-          memory: 128Mi
+  cluster_credentials:
+    kubeconfig: |
+      apiVersion: v1
+      kind: Config
+      clusters:
+        - cluster:
+            server: https://eks-cluster-api.example.com
+          name: eks-cluster
+      contexts:
+        - context:
+            cluster: eks-cluster
+            user: eks-user
+          name: eks-cluster-context
+      current-context: eks-cluster-context
+      users:
+        - name: eks-user
+          user:
+            exec:
+              apiVersion: client.authentication.k8s.io/v1beta1
+              command: aws
+              args:
+                - eks
+                - get-token
+                - --cluster-name
+                - eks-cluster
 ```
 
 ---
 
-## Example with Custom Ingress Settings
+### Example 4: Azure Kubernetes Service (AKS) Cluster Connection
 
-### Create using CLI
-
-Create a YAML file using the example shown below. After the YAML is created, use the command below to apply it.
-
-```shell
-planton apply -f <yaml-path>
-```
-
-### YAML Configuration
+This example connects to an Azure Kubernetes Service (AKS) cluster using Azure Active Directory authentication. The `kubeconfig` is configured with the appropriate authentication details from Azure.
 
 ```yaml
 apiVersion: code2cloud.planton.cloud/v1
-kind: MicroserviceKubernetes
+kind: PlantonCloudKubernetes
 metadata:
-  name: custom-ingress-app
+  name: aks-cluster-connection
 spec:
-  environmentInfo:
-    envId: my-org-development
-  version: feature-branch
-  container:
-    app:
-      env:
-        variables:
-          API_KEY: your-api-key
-      image:
-        repo: myorg/custom-ingress-app
-        tag: beta
-      ports:
-        - appProtocol: https
-          containerPort: 8443
-          isIngressPort: true
-          name: secure-api
-          networkProtocol: TCP
-          servicePort: 443
-      resources:
-        requests:
-          cpu: 150m
-          memory: 200Mi
-        limits:
-          cpu: 1500m
-          memory: 1.5Gi
-      ingress:
-        isEnabled: true
-        annotations:
-          kubernetes.io/ingress.class: "nginx"
-          cert-manager.io/cluster-issuer: "letsencrypt-prod"
-        hosts:
-          - host: api.dev.myorg.com
-            paths:
-              - path: /
-                pathType: Prefix
+  cluster_credentials:
+    kubeconfig: |
+      apiVersion: v1
+      kind: Config
+      clusters:
+        - cluster:
+            server: https://aks-cluster-api.example.com
+          name: aks-cluster
+      contexts:
+        - context:
+            cluster: aks-cluster
+            user: aks-user
+          name: aks-cluster-context
+      current-context: aks-cluster-context
+      users:
+        - name: aks-user
+          user:
+            auth-provider:
+              name: azure
+              config:
+                access-token: your-access-token
+                client-id: your-client-id
+                tenant-id: your-tenant-id
 ```
 
 ---
 
-## Example with Different Datastore Configuration
+### Example 5: Private Kubernetes Cluster with Bearer Token Authentication
 
-### Create using CLI
-
-Create a YAML file using the example shown below. After the YAML is created, use the command below to apply it.
-
-```shell
-planton apply -f <yaml-path>
-```
-
-### YAML Configuration
+This example connects to a private Kubernetes cluster using a bearer token for authentication. This setup ensures that only authorized users can access the Kubernetes API.
 
 ```yaml
 apiVersion: code2cloud.planton.cloud/v1
-kind: MicroserviceKubernetes
+kind: PlantonCloudKubernetes
 metadata:
-  name: datastore-config-app
+  name: private-kubernetes-cluster
 spec:
-  environmentInfo:
-    envId: my-org-testing
-  version: release-1.0
-  container:
-    app:
-      env:
-        variables:
-          DATABASE_NAME: testdb
-      image:
-        repo: myorg/datastore-config-app
-        tag: stable
-      ports:
-        - appProtocol: http
-          containerPort: 8000
-          isIngressPort: true
-          name: api-server
-          networkProtocol: TCP
-          servicePort: 80
-      resources:
-        requests:
-          cpu: 200m
-          memory: 256Mi
-        limits:
-          cpu: 2500m
-          memory: 2.5Gi
-      datastore:
-        engine: postgres
-        uri: postgres://user:password@postgres-service:5432/testdb
+  cluster_credentials:
+    kubeconfig: |
+      apiVersion: v1
+      kind: Config
+      clusters:
+        - cluster:
+            server: https://private-k8s-api.example.com
+          name: private-cluster
+      contexts:
+        - context:
+            cluster: private-cluster
+            user: private-user
+          name: private-cluster-context
+      current-context: private-cluster-context
+      users:
+        - name: private-user
+          user:
+            token: private-cluster-bearer-token
 ```
 
 ---
 
-## Example with Minimal Configuration
+### Example 6: Kubernetes Cluster Connection with TLS Certificates
 
-*Note: This module is not completely implemented.*
-
-### Create using CLI
-
-Create a YAML file using the example shown below. After the YAML is created, use the command below to apply it.
-
-```shell
-planton apply -f <yaml-path>
-```
-
-### YAML Configuration
+This example configures a Kubernetes cluster connection using TLS client certificates for secure authentication. The `kubeconfig` file includes both the client certificate and key.
 
 ```yaml
 apiVersion: code2cloud.planton.cloud/v1
-kind: MicroserviceKubernetes
+kind: PlantonCloudKubernetes
 metadata:
-  name: minimal-app
-spec: {}
+  name: tls-authenticated-cluster
+spec:
+  cluster_credentials:
+    kubeconfig: |
+      apiVersion: v1
+      kind: Config
+      clusters:
+        - cluster:
+            server: https://tls-cluster-api.example.com
+          name: tls-cluster
+      contexts:
+        - context:
+            cluster: tls-cluster
+            user: tls-user
+          name: tls-cluster-context
+      current-context: tls-cluster-context
+      users:
+        - name: tls-user
+          user:
+            client-certificate-data: your-base64-encoded-client-cert
+            client-key-data: your-base64-encoded-client-key
 ```
 
 ---
 
-## Example with Advanced Resource Allocation
+### Future Example: Kubernetes Resource Deployment (To Be Supported)
 
-### Create using CLI
-
-Create a YAML file using the example shown below. After the YAML is created, use the command below to apply it.
-
-```shell
-planton apply -f <yaml-path>
-```
-
-### YAML Configuration
+Once the module is fully implemented, it will support provisioning Kubernetes resources, such as deployments, services, and ingresses. Below is a hypothetical example for a future iteration of the module:
 
 ```yaml
 apiVersion: code2cloud.planton.cloud/v1
-kind: MicroserviceKubernetes
+kind: PlantonCloudKubernetes
 metadata:
-  name: advanced-resources-app
+  name: kubernetes-resource-deployment
 spec:
-  environmentInfo:
-    envId: enterprise-prod
-  version: v2.0.1
-  container:
-    app:
-      env:
-        variables:
-          SERVICE_MODE: high-performance
-          MAX_CONNECTIONS: "5000"
-      image:
-        repo: myorg/advanced-resources-app
-        tag: v2.0.1
-      ports:
-        - appProtocol: http
-          containerPort: 8080
-          isIngressPort: true
-          name: high-perf-api
-          networkProtocol: TCP
-          servicePort: 80
-      resources:
-        requests:
-          cpu: 500m
-          memory: 512Mi
-        limits:
-          cpu: 4000m
-          memory: 4Gi
+  cluster_credentials:
+    kubeconfig: |
+      apiVersion: v1
+      kind: Config
+      clusters:
+        - cluster:
+            server: https://k8s-api.example.com
+          name: my-cluster
+      contexts:
+        - context:
+            cluster: my-cluster
+            user: admin-user
+          name: my-cluster-context
+      current-context: my-cluster-context
+      users:
+        - name: admin-user
+          user:
+            token: my-token
+  resources:
+    deployments:
+      - name: my-deployment
+        spec:
+          replicas: 3
+          containers:
+            - name: nginx
+              image: nginx:latest
+              ports:
+                - containerPort: 80
+    services:
+      - name: my-service
+        spec:
+          type: LoadBalancer
+          ports:
+            - port: 80
+          selector:
+            app: my-deployment
+```
+
+---
+
+### Applying the Configuration
+
+Once the desired YAML file is created with the configuration, you can apply it using the following command:
+
+```shell
+planton apply -f <yaml-path>
 ```
