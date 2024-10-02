@@ -11,13 +11,11 @@ require (
 	google.golang.org/grpc v1.65.0 // indirect
 )
 
-require (
-	github.com/plantoncloud/pulumi-module-golang-commons v0.0.0-20240930122638-5bcefac53812
-)
+require github.com/plantoncloud/pulumi-module-golang-commons v0.0.0-20241001155512-a1d72c00e693
 
 require (
 	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.34.2-20240920164238-5a7b106cbb87.2 // indirect
-	buf.build/gen/go/plantoncloud/project-planton/protocolbuffers/go v1.34.2-20240930080942-f846802b359d.2 // indirect
+	buf.build/gen/go/plantoncloud/project-planton/protocolbuffers/go v1.34.2-20241001121943-29543e670f7b.2 // indirect
 	dario.cat/mergo v1.0.0 // indirect
 	github.com/BurntSushi/toml v1.2.1 // indirect
 	github.com/Microsoft/go-winio v0.6.1 // indirect

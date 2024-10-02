@@ -1,6 +1,8 @@
 buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.34.2-20240920164238-5a7b106cbb87.2/go.mod h1:ylS4c28ACSI59oJrOdW4pHS4n0Hw4TgSPHn8rpHl4Yw=
 buf.build/gen/go/plantoncloud/project-planton/protocolbuffers/go v1.34.2-20240930080942-f846802b359d.2 h1:VXH3Vgd3bwqTOIEcrCU3fZExMuXv7g22AktgRzQN778=
 buf.build/gen/go/plantoncloud/project-planton/protocolbuffers/go v1.34.2-20240930080942-f846802b359d.2/go.mod h1:amr7GkxWn2Soztjf4H6SMO5fYPNc/ODLGMqAcK7S+1I=
+buf.build/gen/go/plantoncloud/project-planton/protocolbuffers/go v1.34.2-20241001121943-29543e670f7b.2 h1:0x0M3Td0KRO6Ihy6hwszL4uvWzKUGvDi8aHe+u0qh9U=
+buf.build/gen/go/plantoncloud/project-planton/protocolbuffers/go v1.34.2-20241001121943-29543e670f7b.2/go.mod h1:amr7GkxWn2Soztjf4H6SMO5fYPNc/ODLGMqAcK7S+1I=
 dario.cat/mergo v1.0.0/go.mod h1:uNxQE+84aUszobStD9th8a29P2fMDhsBdgRYvZOxGmk=
 github.com/BurntSushi/toml v1.2.1/go.mod h1:CxXYINrC8qIiEnFrOxCa7Jy5BFHlXnUU2pbicEuybxQ=
 github.com/Microsoft/go-winio v0.5.2/go.mod h1:WpS1mjBmmwHBEWmogvA2mj8546UReBk4v8QkMxJ6pZY=
@@ -79,6 +81,8 @@ github.com/plantoncloud/project-planton/apis v0.0.0-20240928044211-9168d6c7a46b/
 github.com/plantoncloud/pulumi-module-golang-commons v0.0.0-20240928073143-7b29b143661c/go.mod h1:mVw7Pe4liQoQ+xCIBGd5kNqZHKIf8sXYLQye4VZRxpo=
 github.com/plantoncloud/pulumi-module-golang-commons v0.0.0-20240930122638-5bcefac53812 h1:bc0BdXL/iTYdmcMk+P+/WYknB5bi43if9DXK8wEhllk=
 github.com/plantoncloud/pulumi-module-golang-commons v0.0.0-20240930122638-5bcefac53812/go.mod h1:Zgz8sSCcZh+aDV/GBCeHTDDvg486LgVNg+dV2I3j1qA=
+github.com/plantoncloud/pulumi-module-golang-commons v0.0.0-20241001155512-a1d72c00e693 h1:SEyxSSziT+bowF5qmoB+Dqk6C1mj/7BB7DSE33HiTZo=
+github.com/plantoncloud/pulumi-module-golang-commons v0.0.0-20241001155512-a1d72c00e693/go.mod h1:nNMwY4QsXltcCPHgm3LwKOY1HawYV88MONPHagRepM0=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/pulumi/appdash v0.0.0-20231130102222-75f619a67231/go.mod h1:murToZ2N9hNJzewjHBgfFdXhZKjY3z5cYC1VXk+lbFE=
 github.com/pulumi/esc v0.9.1/go.mod h1:oEJ6bOsjYlQUpjf70GiX+CXn3VBmpwFDxUTlmtUN84c=
